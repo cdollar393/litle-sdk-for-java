@@ -100,7 +100,7 @@ public class LitleBatchFileRequest{
 			if(config == null){
 				config = new Configuration();
 			}
-			this.communication = Communication.getInstance();
+			this.communication = new Communication();
 			this.litleBatchRequestList = new ArrayList<LitleBatchRequest>();
 			this.requestFileName = requestFileName;
 			marshaller = jc.createMarshaller();

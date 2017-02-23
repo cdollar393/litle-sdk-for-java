@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<litleOnlineRequest merchantId="1288791" merchantSdk="Java;11.0.0" version="11.0" xmlns="http://www.litle.com/schema">
+    <authentication>
+        <user>SDKTEAM</user>
+        <password>V3r5K6v7</password>
+    </authentication>
+    <registerTokenRequest reportGroup="Default Report Group" id="id">
+        <orderId>12344</orderId>
+        <applepay>
+            <data>user</data>
+            <header>
+                <applicationData>e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</applicationData>
+                <ephemeralPublicKey>e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</ephemeralPublicKey>
+                <publicKeyHash>e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</publicKeyHash>
+                <transactionId>1234</transactionId>
+            </header>
+            <signature>sign</signature>
+            <version>12345</version>
+        </applepay>
+    </registerTokenRequest>
+</litleOnlineRequest>

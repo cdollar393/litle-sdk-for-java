@@ -57,7 +57,7 @@ public class LitleRFRFileRequest {
             if(config == null){
                 config = new Configuration();
             }
-            this.communication = Communication.getInstance();
+            this.communication = new Communication();
             this.requestFileName = requestFileName;
             marshaller = jc.createMarshaller();
             // JAXB_FRAGMENT property required to prevent unnecessary XML info from being printed in the file during marshal.

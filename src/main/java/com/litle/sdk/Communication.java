@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import javax.net.ssl.SSLContext;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -14,14 +15,16 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
+import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.impl.conn.BasicHttpClientConnectionManager;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.ssl.SSLContexts;
@@ -36,33 +39,18 @@ import com.jcraft.jsch.SftpException;
 
 public class Communication {
 
-	private static Communication instance = null;
-
     private static final String[] SUPPORTED_PROTOCOLS = new String[] {"TLSv1.1", "TLSv1.2"};
 
     private CloseableHttpClient httpclient;
     private StreamData streamData;
     private Properties config;
-    private final int DEFAULT_MAX_IN_POOL = 3;
     private final int DEFAULT_CONNECT_TIMEOUT = 6000;
     private final int KEEP_ALIVE_DURATION = 8000;
-    private int maxHttpConnections;
     private boolean httpKeepAlive = false;
 
-    private Communication() { }
-
-    /**
-     * Used to get a handle to the Singleton instance
-     * @return Singleton instance of the {@link Communication}
-     */
-    public static Communication getInstance() {
-    	if (instance == null) {
-    		instance = new Communication();
-    		instance.init();
-		}
-		return instance;
-	}
-
+    public Communication() {
+        init();
+    }
     private void init() {
         setConfig();
         try {
@@ -71,6 +59,10 @@ public class Communication {
                 throw new IllegalStateException("No supported TLS protocols available");
             }
 
+//            SSLContext ctx = SSLContexts.custom()
+//                    .useProtocol(protocol)
+//                    .loadTrustMaterial(new TrustSelfSignedStrategy())
+//                    .build();
             SSLContext ctx = SSLContexts.custom().useProtocol(protocol).build();
             ConnectionSocketFactory plainSocketFactory = new PlainConnectionSocketFactory();
             LayeredConnectionSocketFactory sslSocketFactory = new SSLConnectionSocketFactory(ctx);
@@ -79,10 +71,7 @@ public class Communication {
                     .register("https", sslSocketFactory)
                     .build();
 
-            PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(registry);
-            manager.setDefaultMaxPerRoute(maxHttpConnections);
-            manager.setMaxTotal(maxHttpConnections);
-            manager.setValidateAfterInactivity(KEEP_ALIVE_DURATION);
+            HttpClientConnectionManager manager = new BasicHttpClientConnectionManager(registry);
 
             ConnectionKeepAliveStrategy keepAliveStrategy = new ConnectionKeepAliveStrategy() {
                 public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
@@ -106,10 +95,9 @@ public class Communication {
             config = new Properties();
             fileInputStream = new FileInputStream((new Configuration()).location());
             config.load(fileInputStream);
-            maxHttpConnections = Integer.valueOf(config.getProperty("httpConnPoolSize", String.valueOf(DEFAULT_MAX_IN_POOL)));
             httpKeepAlive = Boolean.valueOf(config.getProperty("httpKeepAlive", "false"));
         } catch (FileNotFoundException e) {
-            maxHttpConnections = Integer.valueOf(DEFAULT_MAX_IN_POOL);
+            // NO-OP
         } catch (IOException e) {
             throw new LitleOnlineException("Configuration file could not be loaded. " +
                     "Check to see if the user running this has permission to access the file", e);
@@ -154,7 +142,7 @@ public class Communication {
 		String proxyPort = configuration.getProperty("proxyPort");
         String httpTimeout = configuration.getProperty("timeout", "6000");
         HttpHost proxy;
-        RequestConfig requestConfig = null;
+        RequestConfig requestConfig;
         if (reqCfg == null) {
             if (proxyHost != null && proxyHost.length() > 0 && proxyPort != null
                     && proxyHost.length() > 0) {
@@ -176,11 +164,9 @@ public class Communication {
 
 		HttpPost post = new HttpPost(configuration.getProperty("url"));
 		post.setHeader("Content-Type", "text/xml");
-        if (httpKeepAlive) {
-            // we want to leave this connection open for reuse
-            post.setHeader("Connection","keep-alive");
-        } else {
-            post.setHeader("Connection","close");
+		// HTTP 1.1 is persistent by default, so only set this header if we want to close the connection...
+        if (!httpKeepAlive) {
+            post.setHeader("Connection", "close");
         }
         post.setConfig(requestConfig);
 		HttpEntity entity = null;
@@ -192,6 +178,9 @@ public class Communication {
 				System.out.println("Request XML: " + xmlRequest);
 			}
 			post.setEntity(new StringEntity(xmlRequest));
+//			for (Header header : post.getAllHeaders()) {
+//                System.out.println("    Header- name: <" + header.getName() + "> value: <" + header.getValue() + ">");
+//            }
 
 			HttpResponse response = httpclient.execute(post, context);
 			if(response.getStatusLine().getStatusCode() != 200) {

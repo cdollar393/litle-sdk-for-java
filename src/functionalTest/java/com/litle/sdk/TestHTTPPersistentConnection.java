@@ -12,39 +12,48 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class TestSDKhttpPooling {
+public class TestHTTPPersistentConnection {
 
-	@BeforeClass
+    @BeforeClass
 	public static void beforeClass() throws Exception {
 	    System.setOut(new PrintStream(new File("/tmp/thread.out")));
 	}
 
 	@Test
-	public void testThreads() throws Exception {
-	    List<GetThread> threadList = new ArrayList<>();
-	    for (int i = 0; i < 30; i++) {
-	        threadList.add(new GetThread());
-        }
-	    for (GetThread thread: threadList) {
-	       thread.start();
+	public void testConnection_withVolume() throws Exception {
+        List<GetThread> threadList = new ArrayList<>();
+        try {
+            for (int i = 0; i < 30; i++) {
+                threadList.add(new GetThread());
+            }
+            for (GetThread thread : threadList) {
+                System.out.println("Starting Thread: <" + thread.getId() + ">");
+                thread.start();
+            }
+
+            for (GetThread thread : threadList) {
+                thread.join();
+            }
+        } catch (Exception e) {
+            fail("Exception running threads...");
         }
 
-        for(GetThread thread: threadList) {
-	        thread.join();
-        }
 	}
 
-	static class GetThread extends Thread {
+    /**
+     * Testing class used to create many LitleOnline instances and run them in parallel
+     */
+    static class GetThread extends Thread {
         public LitleOnline litleOnline = new LitleOnline();
-        private final int MAX_LOOPS = 10;
+        private final int MAX_LOOPS = 30;
         long start = 0;
-		@Override
-		public void run() {
-			try {
+        @Override
+        public void run() {
+            try {
                 int count = 0;
                 long start = 0;
 
-			    while (count < MAX_LOOPS) {
+                while (count < MAX_LOOPS) {
                     Authorization authorization = new Authorization();
                     authorization.setReportGroup(String.valueOf(this.getId()));
                     authorization.setOrderId(String.valueOf(count));
@@ -68,16 +77,16 @@ public class TestSDKhttpPooling {
                             this.getId() + "> Completed loop # <" + count + ">\n");
                     count++;
                 }
-			} catch (Exception ex) {
-			    fail("Exception in thread: <" + this.getId() + ">");
+            } catch (Exception ex) {
+//                fail("Exception in thread: <" + this.getId() + ">");
                 long duration = (System.currentTimeMillis() - start);
                 System.out.println("**Exception in thread <" + this.getId() + "> duration: <" + duration + "> millis.\n" +
                         "       Exception running auth <" + ex.getStackTrace() + "> message: " + ex.getMessage());
-			}
-		}
+                ex.printStackTrace();
+                throw ex;
+            }
+        }
 
-	}
-
-
+    }
 
 }

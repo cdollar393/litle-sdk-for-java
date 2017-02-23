@@ -95,7 +95,7 @@ public class LitleOnline {
 	 */
 	public LitleOnline() {
 
-		communication = Communication.getInstance();
+		communication = new Communication();
 		context = new BasicHttpContext();
 		FileInputStream fileInputStream = null;
 
@@ -149,14 +149,14 @@ public class LitleOnline {
 	public LitleOnline(Properties config) {
 		this.config = config;
         context = new BasicHttpContext();
-		communication = Communication.getInstance();
+		communication = new Communication();
 	}
 
     public LitleOnline(Properties config, Boolean removeStubs) {
         this.config = config;
         this.removeStubs = removeStubs;
         context = new BasicHttpContext();
-        communication = Communication.getInstance();
+        communication = new Communication();
     }
 
     /**
@@ -181,7 +181,7 @@ public class LitleOnline {
 		this.config = config;
         context = new BasicHttpContext();
 		this.requestConfig = requestConfig;
-		this.communication = Communication.getInstance();
+		this.communication = new Communication();
 	}
 
 	protected void setCommunication(Communication communication) {
