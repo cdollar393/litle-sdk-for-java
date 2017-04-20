@@ -201,6 +201,8 @@ public class Communication {
 
 	    try {
             sftp.put(requestFile.getAbsolutePath(), "inbound/" + requestFile.getName() + ".prg");
+            // set the file permissions in case the FTP user is not setup correctly on our end
+            sftp.chmod(0664, "inbound/" + requestFile.getName() + ".prg");
             sftp.rename("inbound/" + requestFile.getName() + ".prg", "inbound/" + requestFile.getName() + ".asc");
         }
 	    catch (SftpException e) {
