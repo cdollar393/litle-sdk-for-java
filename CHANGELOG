@@ -1,6 +1,6 @@
 = LitleOnline CHANGELOG
 
-==Version 10.5.2(April 21, 2017)
+==Version 10.5.3(April 21, 2017)
 * Bug: set file permissions (0664) on FTP dropoff
 
 ==Version 10.5.1 (December 2, 2016)
