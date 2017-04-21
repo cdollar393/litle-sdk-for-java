@@ -6,3 +6,5 @@ test/
 .classpath
 .project
 .settings/
+.idea/
+temp.xml
