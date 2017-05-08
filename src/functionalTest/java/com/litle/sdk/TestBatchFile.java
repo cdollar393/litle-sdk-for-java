@@ -99,75 +99,11 @@ import com.litle.sdk.generate.VendorDebit;
 import com.litle.sdk.generate.VendorDebitResponse;
 
 public class TestBatchFile {
-
- //   String merchantId = "0180";
-
-//    public static class FailedRule implements TestRule {
-//        public Statement apply(final Statement base,
-//                final Description description) {
-//            return new Statement() {
-//                @Override
-//                public void evaluate() throws Throwable {
-//                    try {
-//                        base.evaluate();
-//                    } catch (Throwable t) {
-//                        System.out.println(description.getDisplayName()
-//                                + " failure caused by :");
-//                        t.printStackTrace();
-//                        retry.setNotGood();
-//                        if (retry.isLastTry()) {
-//                            throw t;
-//                        } else {
-//                            System.out.println("Retrying.");
-//                        }
-//                    }
-//                }
-//            };
-//        }
-//    }
-//
-//    public static class RetryRule implements TestRule {
-//        private int retryCount, currentTry;
-//
-//        private boolean allGood = false;
-//
-//        public RetryRule(int retryCount) {
-//            this.retryCount = retryCount;
-//            this.currentTry = 1;
-//        }
-//
-//        public boolean isLastTry() {
-//            return currentTry == retryCount;
-//        }
-//
-//        public void setNotGood() {
-//            allGood = false;
-//        }
-//
-//        public Statement apply(final Statement base,
-//                final Description description) {
-//            return new Statement() {
-//                @Override
-//                public void evaluate() throws Throwable {
-//                    // implement retry logic here
-//                    for (; currentTry <= retryCount && !allGood; currentTry++) {
-//                        allGood = true;
-//                        base.evaluate();
-//                    }
-//                }
-//            };
-//        }
-//    }
-//
-//    @ClassRule
-//    public static RetryRule retry = new RetryRule(3);
-//
-//    @Rule
-//    public FailedRule onFailed = new FailedRule();
+    private final long TIME_STAMP = System.currentTimeMillis();
 
     @Test
     public void testSendToLitle_WithFileConfig() throws Exception {
-        String requestFileName = "litleSdk-testBatchFile-fileConfig.xml";
+        String requestFileName = "litleSdk-testBatchFile-fileConfig-" + TIME_STAMP + ".xml";
         LitleBatchFileRequest request = new LitleBatchFileRequest(
                 requestFileName);
 
@@ -221,7 +157,7 @@ public class TestBatchFile {
         configOverrides.setProperty("batchRequestFolder", workingDirRequests);
         configOverrides.setProperty("batchResponseFolder", workingDirResponses);
 
-        String requestFileName = "litleSdk-testBatchFile-configOverrides.xml";
+        String requestFileName = "litleSdk-testBatchFile-configOverrides-" + TIME_STAMP + ".xml";
         LitleBatchFileRequest request = new LitleBatchFileRequest(
                 requestFileName, configOverrides);
 
@@ -246,7 +182,7 @@ public class TestBatchFile {
     @Test
     public void testSendToLitleSFTP_WithPreviouslyCreatedFile()
             throws Exception {
-        String requestFileName = "litleSdk-testBatchFile-fileConfigSFTP.xml";
+        String requestFileName = "litleSdk-testBatchFile-fileConfigSFTP-" + TIME_STAMP + ".xml";
         LitleBatchFileRequest request = new LitleBatchFileRequest(
                 requestFileName);
 
@@ -295,7 +231,7 @@ public class TestBatchFile {
     public void testSendOnlyToLitleSFTP_WithPreviouslyCreatedFile()
             throws Exception {
         // --- Prepare the batch file ---
-        String requestFileName = "litleSdk-testBatchFile-fileConfigSFTP.xml";
+        String requestFileName = "litleSdk-testBatchFile-fileConfigSFTP-" + TIME_STAMP + ".xml";
         LitleBatchFileRequest request1 = new LitleBatchFileRequest(
                 requestFileName);
 
@@ -356,7 +292,7 @@ public class TestBatchFile {
 
     @Test
     public void testSendToLitleSFTP_WithFileConfig() throws Exception {
-        String requestFileName = "litleSdk-testBatchFile-fileConfigSFTP.xml";
+        String requestFileName = "litleSdk-testBatchFile-fileConfigSFTP-" + TIME_STAMP + ".xml";
         LitleBatchFileRequest request = new LitleBatchFileRequest(
                 requestFileName);
 
@@ -410,7 +346,7 @@ public class TestBatchFile {
         configOverrides.setProperty("batchRequestFolder", workingDirRequests);
         configOverrides.setProperty("batchResponseFolder", workingDirResponses);
 
-        String requestFileName = "litleSdk-testBatchFile-configOverridesSFTP.xml";
+        String requestFileName = "litleSdk-testBatchFile-configOverridesSFTP-" + TIME_STAMP + ".xml";
         LitleBatchFileRequest request = new LitleBatchFileRequest(
                 requestFileName, configOverrides);
 
@@ -452,7 +388,7 @@ public class TestBatchFile {
 
     @Test
     public void testMechaBatchAndProcess() {
-        String requestFileName = "litleSdk-testBatchFile-MECHA.xml";
+        String requestFileName = "litleSdk-testBatchFile-MECHA-" + TIME_STAMP + ".xml";
         LitleBatchFileRequest request = new LitleBatchFileRequest(
                 requestFileName);
 
@@ -621,7 +557,7 @@ public class TestBatchFile {
 
     @Test
     public void testEcheckPreNoteAll() {
-        String requestFileName = "litleSdk-testBatchFile-EcheckPreNoteAll.xml";
+        String requestFileName = "litleSdk-testBatchFile-EcheckPreNoteAll-" + TIME_STAMP + ".xml";
         LitleBatchFileRequest request = new LitleBatchFileRequest(
                 requestFileName);
 
@@ -881,7 +817,7 @@ public class TestBatchFile {
     
     @Test
     public void testPFIFInstructionTxn() {
-        String requestFileName = "litleSdk-testBatchFile-PFIF.xml";
+        String requestFileName = "litleSdk-testBatchFile-PFIF-" + TIME_STAMP + ".xml";
         LitleBatchFileRequest request = new LitleBatchFileRequest(
                 requestFileName);
 
@@ -1016,7 +952,7 @@ public class TestBatchFile {
 
     @Test
     public void testGiftCardTransactions() {
-        String requestFileName = "litleSdk-testBatchFile-RECURRING.xml";
+        String requestFileName = "litleSdk-testBatchFile-RECURRING-" + TIME_STAMP + ".xml";
         LitleBatchFileRequest request = new LitleBatchFileRequest(
                 requestFileName);
 
@@ -1264,7 +1200,7 @@ public class TestBatchFile {
 
     @Test
     public void testMechaBatchAndProcess_RecurringDemonstratesUseOfProcessorAdapter() {
-        String requestFileName = "litleSdk-testBatchFile-RECURRING.xml";
+        String requestFileName = "litleSdk-testBatchFile-RECURRING-" + TIME_STAMP + ".xml";
         LitleBatchFileRequest request = new LitleBatchFileRequest(
                 requestFileName);
 
@@ -1339,7 +1275,7 @@ public class TestBatchFile {
 
     @Test
     public void testBatch_AU() {
-        String requestFileName = "litleSdk-testBatchFile_AU.xml";
+        String requestFileName = "litleSdk-testBatchFile_AU-" + TIME_STAMP + ".xml";
         LitleBatchFileRequest request = new LitleBatchFileRequest(
                 requestFileName);
 
