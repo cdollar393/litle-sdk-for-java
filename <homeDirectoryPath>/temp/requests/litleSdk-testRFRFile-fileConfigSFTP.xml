@@ -1,0 +1,11 @@
+<litleRequest version="10.7" numBatchRequests="0" xmlns="http://www.litle.com/schema">
+    <authentication>
+        <user>BATCHSDKA</user>
+        <password>certpass</password>
+    </authentication>
+ <RFRRequest xmlns="http://www.litle.com/schema">
+    <accountUpdateFileRequestData>
+        <merchantId>0180-xml10</merchantId>
+        <postDay>2017-07-12</postDay>
+    </accountUpdateFileRequestData>
+</RFRRequest></litleRequest>
